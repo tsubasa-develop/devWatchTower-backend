@@ -60,7 +60,7 @@ function transformItem(feed: RSSFeed, item: RSSItem): ContentInsert {
 
   return {
     id,
-    type: 'techblog',
+    type: 'article',
     title: item.title,
     summary: item.description,
     body: null, // RSSフィードには本文は含まれない

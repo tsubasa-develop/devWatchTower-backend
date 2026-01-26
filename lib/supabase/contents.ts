@@ -95,18 +95,23 @@ export async function getContentById(id: string): Promise<ContentRow | null> {
  */
 export async function getContents(options: {
   type?: string;
+  q?: string;
   limit?: number;
   offset?: number;
   orderBy?: keyof ContentRow;
   order?: 'asc' | 'desc';
 }): Promise<{ data: ContentRow[]; total: number }> {
   const client = getSupabaseClient();
-  const { type, limit = 20, offset = 0, orderBy = 'published_at', order = 'desc' } = options;
+  const { type, q, limit = 20, offset = 0, orderBy = 'published_at', order = 'desc' } = options;
 
   let query = client.from('contents').select('*', { count: 'exact' });
 
   if (type) {
     query = query.eq('type', type);
+  }
+
+  if (q) {
+    query = query.ilike('title', `%${q}%`);
   }
 
   query = query.order(orderBy, { ascending: order === 'asc' });

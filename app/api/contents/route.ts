@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { contentListItems } from '@/lib/data/contents';
+import { getContents } from '@/lib/supabase/contents';
 import type { ContentListItem, ContentListResponse, ErrorResponse, SortField, SortOrder } from '@/lib/types';
 
 // 有効なソートフィールド
@@ -40,53 +41,85 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(error, { status: 400 });
   }
 
-  // フィルタリング処理
-  let filteredItems = [...contentListItems];
+  // デバッグモード（モックデータ）の使用フラグ
+  const useMockData = process.env.USE_MOCK_DATA === 'true';
 
-  // typeでフィルタリング
-  if (typeFilter) {
-    filteredItems = filteredItems.filter(item => item.type === typeFilter);
-  }
+  if (useMockData) {
+    // フィルタリング処理（モック用）
+    let filteredItems = [...contentListItems];
 
-  // qでフリーテキスト検索（タイトルとサマリー）
-  if (searchQuery) {
-    const lowerQuery = searchQuery.toLowerCase();
-    filteredItems = filteredItems.filter(item => {
-      const titleMatch = item.title.toLowerCase().includes(lowerQuery);
-      const summaryMatch = item.summary?.toLowerCase().includes(lowerQuery) ?? false;
-      return titleMatch || summaryMatch;
-    });
-  }
-
-  // ソート処理
-  filteredItems.sort((a, b) => {
-    let aValue: string = a[sort as keyof ContentListItem] as string;
-    let bValue: string = b[sort as keyof ContentListItem] as string;
-
-    if (sort === 'title') {
-      aValue = aValue.toLowerCase();
-      bValue = bValue.toLowerCase();
+    // typeでフィルタリング
+    if (typeFilter) {
+      filteredItems = filteredItems.filter(item => item.type === typeFilter);
     }
 
-    if (aValue < bValue) return order === 'asc' ? -1 : 1;
-    if (aValue > bValue) return order === 'asc' ? 1 : -1;
-    return 0;
-  });
+    // qでフリーテキスト検索（タイトルとサマリー）
+    if (searchQuery) {
+      const lowerQuery = searchQuery.toLowerCase();
+      filteredItems = filteredItems.filter(item => {
+        const titleMatch = item.title.toLowerCase().includes(lowerQuery);
+        const summaryMatch = item.summary?.toLowerCase().includes(lowerQuery) ?? false;
+        return titleMatch || summaryMatch;
+      });
+    }
 
-  // 総件数を保存
-  const total = filteredItems.length;
+    // ソート処理
+    filteredItems.sort((a, b) => {
+      let aValue: string = a[sort as keyof ContentListItem] as string;
+      let bValue: string = b[sort as keyof ContentListItem] as string;
 
-  // ページネーション処理
-  const paginatedItems = filteredItems.slice(offset, offset + limit);
+      if (sort === 'title') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
 
-  // レスポンスを返す
-  const response: ContentListResponse = {
-    items: paginatedItems,
-    limit,
-    offset,
-    total
-  };
+      if (aValue < bValue) return order === 'asc' ? -1 : 1;
+      if (aValue > bValue) return order === 'asc' ? 1 : -1;
+      return 0;
+    });
 
-  return NextResponse.json(response);
+    const total = filteredItems.length;
+    const paginatedItems = filteredItems.slice(offset, offset + limit);
+
+    const response: ContentListResponse = {
+      items: paginatedItems,
+      limit,
+      offset,
+      total
+    };
+
+    return NextResponse.json(response);
+  } else {
+    // Supabaseから取得
+    const { data: rows, total } = await getContents({
+      type: typeFilter,
+      q: searchQuery,
+      limit,
+      offset,
+      orderBy: sort as any,
+      order: order
+    });
+
+    // API型に合わせてマッピング (metadataをJSON文字列に変換)
+    const items: ContentListItem[] = rows.map(row => ({
+      id: row.id,
+      type: row.type,
+      title: row.title,
+      summary: row.summary,
+      metadata: JSON.stringify(row.metadata),
+      published_at: row.published_at,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    }));
+
+    const response: ContentListResponse = {
+      items,
+      limit,
+      offset,
+      total
+    };
+
+    return NextResponse.json(response);
+  }
 }
 
