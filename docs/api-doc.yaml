@@ -1,0 +1,249 @@
+openapi: 3.0.3
+info:
+  title: パブリックコンテンツAPI
+  version: 1.0.1
+  description: >
+    記事やリポジトリなどの公開されたコンテンツアイテムを提供する読み取り専用のパブリックAPI。
+    タイプ固有のフィールドは、自由形式のJSONとして`metadata`に格納されます。
+
+servers:
+  - url: https://mock.apidog.com/m1/1183627-1178076-default
+
+tags:
+  - name: Public
+    description: フロントエンド向けの読み取り専用パブリックエンドポイント
+
+paths:
+  /contents:
+    get:
+      tags: [Public]
+      summary: 公開コンテンツ一覧取得
+      description: 公開されたコンテンツのみを返します。
+      parameters:
+        - $ref: "#/components/parameters/QueryType"
+        - $ref: "#/components/parameters/QueryQ"
+        - $ref: "#/components/parameters/QueryLimit"
+        - $ref: "#/components/parameters/QueryOffset"
+        - $ref: "#/components/parameters/QuerySort"
+        - $ref: "#/components/parameters/QueryOrder"
+      responses:
+        "200":
+          description: ページネーションされた公開コンテンツのリスト
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /contents/{id}:
+    get:
+      tags: [Public]
+      summary: IDによる公開コンテンツ取得
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: 公開されたコンテンツアイテム
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Content"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  parameters:
+    PathId:
+      name: id
+      in: path
+      required: true
+      description: コンテンツID（UUID推奨）
+      schema:
+        type: string
+        format: uuid
+
+    QueryType:
+      name: type
+      in: query
+      required: false
+      description: コンテンツタイプでフィルタリング
+      schema:
+        type: string
+
+    QueryQ:
+      name: q
+      in: query
+      required: false
+      description: フリーテキスト検索キーワード（例：タイトル/要約に対して）
+      schema:
+        type: string
+        maxLength: 200
+
+    QueryLimit:
+      name: limit
+      in: query
+      required: false
+      description: ページサイズ
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 20
+
+    QueryOffset:
+      name: offset
+      in: query
+      required: false
+      description: ページネーション用のオフセット
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+
+    QuerySort:
+      name: sort
+      in: query
+      required: false
+      description: ソートフィールド
+      schema:
+        type: string
+        enum: [created_at, updated_at, published_at, title]
+        default: published_at
+
+    QueryOrder:
+      name: order
+      in: query
+      required: false
+      description: ソート順
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+
+  responses:
+    BadRequest:
+      description: 無効なリクエスト
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: 見つかりません
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Content:
+      type: object
+      required:
+        - id
+        - type
+        - title
+        - metadata
+        - published_at
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          description: コンテンツタイプ識別子
+        title:
+          type: string
+          maxLength: 200
+        summary:
+          type: string
+          maxLength: 2000
+          nullable: true
+        body:
+          type: string
+          description: 記事の本文内容（記事タイプの場合に使用）
+          nullable: true
+        metadata:
+          type: string
+          description: メタデータ（JSON文字列として格納）
+        published_at:
+          type: string
+          format: date-time
+          description: 公開タイムスタンプ
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ContentListItem:
+      type: object
+      required:
+        - id
+        - type
+        - title
+        - metadata
+        - published_at
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          description: コンテンツタイプ識別子
+        title:
+          type: string
+          maxLength: 200
+        summary:
+          type: string
+          maxLength: 2000
+          nullable: true
+        metadata:
+          type: string
+          description: メタデータ（JSON文字列として格納）
+        published_at:
+          type: string
+          format: date-time
+          description: 公開タイムスタンプ
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ContentListResponse:
+      type: object
+      required: [items, limit, offset, total]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContentListItem"
+        limit:
+          type: integer
+        offset:
+          type: integer
+        total:
+          type: integer
+          description: クエリの総件数（実装によっては近似値の場合があります）
+
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: bad_request
+        message:
+          type: string
+          example: "無効なパラメータ: limit"
+        details:
+          type: object
+          additionalProperties: true
+          nullable: true
