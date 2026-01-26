@@ -18,10 +18,12 @@ export { pluginRegistry } from './registry';
 
 // 各プラグイン
 export * as github from './github';
+export * as lineTechblog from './line-techblog';
 
 // プラグインの自動登録
 import { pluginRegistry } from './registry';
 import { createGitHubPlugin } from './github';
+import { createLineTechblogPlugin } from './line-techblog';
 
 /**
  * デフォルトプラグインを登録する
@@ -31,8 +33,7 @@ export function registerDefaultPlugins(): void {
   // GitHub プラグイン
   pluginRegistry.register(createGitHubPlugin());
 
-  // 将来的に他のプラグインをここに追加
-  // pluginRegistry.register(createTwitterPlugin());
-  // pluginRegistry.register(createRSSPlugin());
+  // LINE TechBlog プラグイン
+  pluginRegistry.register(createLineTechblogPlugin());
 }
 

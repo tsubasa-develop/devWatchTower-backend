@@ -68,7 +68,7 @@ export class GitHubReleasesPlugin implements DataSourcePlugin<RepositoryReleases
       ...config,
     };
 
-    const { repositories, releasesPerRepo } = mergedConfig;
+    const { repositories = [], releasesPerRepo } = mergedConfig;
 
     const result = await fetchRepositoriesReleases(repositories, releasesPerRepo);
 

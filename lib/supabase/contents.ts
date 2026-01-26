@@ -26,10 +26,15 @@ export async function upsertContents(contents: ContentInsert[]): Promise<UpsertR
     return { success: true, inserted: 0, updated: 0 };
   }
 
+  // 重複IDを除去（同じIDが複数ある場合は後のものを優先）
+  const uniqueContents = Array.from(
+    new Map(contents.map((c) => [c.id, c])).values()
+  );
+
   const client = getSupabaseClient();
 
   // id が指定されているものは更新対象として確認
-  const existingIds = contents.filter((c) => c.id).map((c) => c.id);
+  const existingIds = uniqueContents.filter((c) => c.id).map((c) => c.id);
 
   let existingCount = 0;
   if (existingIds.length > 0) {
@@ -42,7 +47,7 @@ export async function upsertContents(contents: ContentInsert[]): Promise<UpsertR
 
   const { data, error } = await client
     .from('contents')
-    .upsert(contents, {
+    .upsert(uniqueContents as any, {
       onConflict: 'id',
       ignoreDuplicates: false,
     })
@@ -60,7 +65,7 @@ export async function upsertContents(contents: ContentInsert[]): Promise<UpsertR
   return {
     success: true,
     data: data || [],
-    inserted: contents.length - existingCount,
+    inserted: uniqueContents.length - existingCount,
     updated: existingCount,
   };
 }
