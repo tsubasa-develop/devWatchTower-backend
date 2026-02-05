@@ -31,6 +31,7 @@ DevWatchTower Backend は、開発者向けのブログやリポジトリの更�
 ### 1. 環境変数の設定
 
 `.env.example`（存在する場合）を参考に、`.env.local` を作成し、必要な情報を設定してください。
+（このリポジトリに `.env.example` が無い場合は、下記のキーを参考に作成してください）
 
 ```env
 # GitHub API (データ取得用)
@@ -60,6 +61,7 @@ npm run generate:types
 - `npm run fetch:releases`: プラグインを使用して GitHub から最新情報を取得するテスト（保存はしません）。
 - `npm run sync:releases`: 情報を取得し、Supabase データベースへ同期（保存）します。
 - `npm run build`: プロダクション用ビルド。
+- `npm run lint`: ESLint の実行。
 
 ## 🔄 データ同期フロー
 
