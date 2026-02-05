@@ -3,53 +3,120 @@ name: magi trigger (discord)
 "on":
   issue_comment:
     types: [created]
+  pull_request_review_comment:
+    types: [created]
 
 permissions:
   contents: read
 
 jobs:
-  trigger:
+  trigger_issue_or_pr_comment:
+    name: Trigger from issue/pr comment
     if: >-
-      (github.actor == 'tsubasa0717' || github.actor == 'tsubasa-develop') &&
+      github.event_name == 'issue_comment' &&
+      github.actor == 'tsubasa-develop' &&
       (contains(github.event.comment.body, '@tsubasa-develop implement') || contains(github.event.comment.body, '@tsubasa-develop 実装して'))
     runs-on: ubuntu-latest
     steps:
-      - name: Send trigger to Discord
+      - name: Send trigger to Discord (#magi-ops)
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           REPO: ${{ github.repository }}
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          URL: ${{ github.event.issue.html_url }}
+          NUMBER: ${{ github.event.issue.number }}
           ACTOR: ${{ github.actor }}
           COMMENT_BODY: ${{ github.event.comment.body }}
+          EVENT_KIND: issue_comment
         run: |
           if [ -z "$DISCORD_WEBHOOK_URL" ]; then
             echo "DISCORD_WEBHOOK_URL is not set" >&2
             exit 1
           fi
 
-          payload=$(python3 - <<'PY'
-          import json, os
-          repo=os.environ['REPO']
-          issue_url=os.environ['ISSUE_URL']
-          issue_number=os.environ['ISSUE_NUMBER']
-          actor=os.environ['ACTOR']
-          comment_body=os.environ.get('COMMENT_BODY','')
-          content = (
-            "<@1468648944815833210>\n"
-            "MAGI_TRIGGER v1\n"
-            f"repo: {repo}\n"
-            f"issue: #{issue_number}\n"
-            f"url: {issue_url}\n"
-            f"actor: {actor}\n"
-            "command: implement\n"
-            "---\n"
-            f"comment:\n{comment_body}\n"
-          )
+          payload="$(python3 - <<'PY'
+import json, os
 
-          print(json.dumps({"content": content}, ensure_ascii=False))
-          PY
-          )
+repo=os.environ["REPO"]
+url=os.environ["URL"]
+number=os.environ["NUMBER"]
+actor=os.environ["ACTOR"]
+comment=os.environ.get("COMMENT_BODY","")
+event_kind=os.environ.get("EVENT_KIND","issue_comment")
+content = (
+  "<@1468648944815833210>\n"
+  "MAGI_TRIGGER v1\n"
+  f"event: {event_kind}\n"
+  f"repo: {repo}\n"
+  f"number: {number}\n"
+  f"url: {url}\n"
+  f"actor: {actor}\n"
+  "command: implement\n"
+  "---\n"
+  f"comment:\n{comment}\n"
+)
+
+print(json.dumps({"content": content}, ensure_ascii=False))
+PY
+)"
+          curl -fsS -X POST "$DISCORD_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            --data "$payload"
+
+  trigger_pr_review_comment:
+    name: Trigger from PR review (diff) comment
+    if: >-
+      github.event_name == 'pull_request_review_comment' &&
+      github.actor == 'tsubasa-develop' &&
+      (contains(github.event.comment.body, '@tsubasa-develop implement') || contains(github.event.comment.body, '@tsubasa-develop 実装して'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send trigger to Discord (#magi-ops)
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          REPO: ${{ github.repository }}
+          URL: ${{ github.event.pull_request.html_url }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          ACTOR: ${{ github.actor }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          PATH: ${{ github.event.comment.path }}
+          LINE: ${{ github.event.comment.line }}
+          SIDE: ${{ github.event.comment.side }}
+          EVENT_KIND: pull_request_review_comment
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL is not set" >&2
+            exit 1
+          fi
+          payload="$(python3 - <<'PY'
+import json, os
+
+repo=os.environ["REPO"]
+url=os.environ["URL"]
+number=os.environ["NUMBER"]
+actor=os.environ["ACTOR"]
+comment=os.environ.get("COMMENT_BODY","")
+path=os.environ.get("PATH","")
+line=os.environ.get("LINE","")
+side=os.environ.get("SIDE","")
+event_kind=os.environ.get("EVENT_KIND","pull_request_review_comment")
+
+content = (
+  "<@1468648944815833210>\n"
+  "MAGI_TRIGGER v1\n"
+  f"event: {event_kind}\n"
+  f"repo: {repo}\n"
+  f"number: {number}\n"
+  f"url: {url}\n"
+  f"actor: {actor}\n"
+  "command: implement\n"
+  f"context: {path}:{line} ({side})\n"
+  "---\n"
+  f"comment:\n{comment}\n"
+)
+
+print(json.dumps({"content": content}, ensure_ascii=False))
+PY
+)"
           curl -fsS -X POST "$DISCORD_WEBHOOK_URL" \
             -H 'Content-Type: application/json' \
             --data "$payload"
