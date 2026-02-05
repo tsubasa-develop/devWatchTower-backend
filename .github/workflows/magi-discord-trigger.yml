@@ -11,7 +11,7 @@ jobs:
   trigger:
     if: >-
       (github.actor == 'tsubasa0717' || github.actor == 'tsubasa-develop') &&
-      (contains(github.event.comment.body, '@magi implement') || contains(github.event.comment.body, '@magi 実装して'))
+      (contains(github.event.comment.body, '@tsubasa-develop implement') || contains(github.event.comment.body, '@tsubasa-develop 実装して'))
     runs-on: ubuntu-latest
     steps:
       - name: Send trigger to Discord
