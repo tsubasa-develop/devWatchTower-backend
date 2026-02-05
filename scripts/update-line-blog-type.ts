@@ -1,12 +1,8 @@
-/**
- * 既存の LINE TechBlog データの type を 'techblog' から 'article' に更新するスクリプト
- */
 
 import { getSupabaseClient } from '../lib/supabase/client';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
-// .env.local をロード
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 async function migrate() {
@@ -14,7 +10,6 @@ async function migrate() {
 
   console.log('Migrating LINE TechBlog content types...');
 
-  // 1. 対象のレコードを確認
   const { count, error: countError } = await supabase
     .from('contents')
     .select('*', { count: 'exact', head: true })
@@ -33,7 +28,6 @@ async function migrate() {
     return;
   }
 
-  // 2. 更新実行
   const { data, error: updateError } = await supabase
     .from('contents')
     .update({ type: 'article' })

@@ -1,6 +1,3 @@
-/**
- * Contents テーブルの CRUD 操作
- */
 
 import { getSupabaseClient } from './client';
 import type { ContentInsert, ContentRow, ContentUpdate } from './types';
@@ -13,27 +10,17 @@ export interface UpsertResult {
   updated: number;
 }
 
-/**
- * コンテンツを作成または更新（Upsert）
- *
- * id が指定されている場合は更新、なければ新規作成
- *
- * @param contents - 挿入/更新するコンテンツ配列
- * @returns 結果
- */
 export async function upsertContents(contents: ContentInsert[]): Promise<UpsertResult> {
   if (contents.length === 0) {
     return { success: true, inserted: 0, updated: 0 };
   }
 
-  // 重複IDを除去（同じIDが複数ある場合は後のものを優先）
   const uniqueContents = Array.from(
     new Map(contents.map((c) => [c.id, c])).values()
   );
 
   const client = getSupabaseClient();
 
-  // id が指定されているものは更新対象として確認
   const existingIds = uniqueContents.filter((c) => c.id).map((c) => c.id);
 
   let existingCount = 0;
@@ -70,9 +57,6 @@ export async function upsertContents(contents: ContentInsert[]): Promise<UpsertR
   };
 }
 
-/**
- * コンテンツを取得（ID指定）
- */
 export async function getContentById(id: string): Promise<ContentRow | null> {
   const client = getSupabaseClient();
 
@@ -90,9 +74,6 @@ export async function getContentById(id: string): Promise<ContentRow | null> {
   return data;
 }
 
-/**
- * コンテンツ一覧を取得
- */
 export async function getContents(options: {
   type?: string;
   q?: string;
@@ -130,9 +111,6 @@ export async function getContents(options: {
   };
 }
 
-/**
- * コンテンツを削除
- */
 export async function deleteContent(id: string): Promise<boolean> {
   const client = getSupabaseClient();
 
@@ -146,9 +124,6 @@ export async function deleteContent(id: string): Promise<boolean> {
   return true;
 }
 
-/**
- * 指定した type のコンテンツを全削除（同期用）
- */
 export async function deleteContentsByType(type: string): Promise<number> {
   const client = getSupabaseClient();
 

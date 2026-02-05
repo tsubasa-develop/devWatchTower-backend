@@ -7,9 +7,6 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-/**
- * GET /api/contents/:id - IDによる公開コンテンツ取得
- */
 export async function GET(
   request: NextRequest,
   { params }: RouteParams
@@ -24,7 +21,6 @@ export async function GET(
     return NextResponse.json(error, { status: 400 });
   }
 
-  // デバッグモード（モックデータ）の使用フラグ
   const useMockData = process.env.USE_MOCK_DATA === 'true';
 
   if (useMockData) {
@@ -40,11 +36,9 @@ export async function GET(
       return NextResponse.json(error, { status: 404 });
     }
   } else {
-    // Supabaseから取得
     const row = await getContentById(contentId);
 
     if (row) {
-      // API型に合わせてマッピング
       const content: Content = {
         id: row.id,
         type: row.type,

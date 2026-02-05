@@ -1,15 +1,9 @@
-/**
- * Supabase クライアント
- */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 let supabaseClient: SupabaseClient<Database> | null = null;
 
-/**
- * 環境変数を検証
- */
 function validateEnv(): { url: string; serviceRoleKey: string } {
   const url = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -25,12 +19,6 @@ function validateEnv(): { url: string; serviceRoleKey: string } {
   return { url, serviceRoleKey };
 }
 
-/**
- * Supabase クライアントを取得（サービスロール権限）
- *
- * サーバーサイドでのみ使用してください。
- * サービスロールキーはRLSをバイパスするため、クライアントサイドには絶対に公開しないでください。
- */
 export function getSupabaseClient(): SupabaseClient<Database> {
   if (supabaseClient) {
     return supabaseClient;
@@ -48,11 +36,6 @@ export function getSupabaseClient(): SupabaseClient<Database> {
   return supabaseClient;
 }
 
-/**
- * 読み取り専用クライアント（anon key使用）
- *
- * 公開APIからの読み取りに使用
- */
 export function getSupabaseAnonClient(): SupabaseClient<Database> {
   const url = process.env.SUPABASE_URL;
   const anonKey = process.env.SUPABASE_ANON_KEY;

@@ -1,8 +1,3 @@
-/**
- * Supabase データベース型定義
- *
- * 将来的には `supabase gen types typescript` で自動生成可能
- */
 
 export interface Database {
   public: {
@@ -46,12 +41,9 @@ export interface Database {
   };
 }
 
-/** contents テーブルの行型 */
 export type ContentRow = Database['public']['Tables']['contents']['Row'];
 
-/** contents テーブルへの挿入型 */
 export type ContentInsert = Database['public']['Tables']['contents']['Insert'];
 
-/** contents テーブルの更新型 */
 export type ContentUpdate = Database['public']['Tables']['contents']['Update'];
 

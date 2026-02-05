@@ -1,6 +1,3 @@
-/**
- * デバッグ用スクリプト - LINE TechBlog データ確認
- */
 import { config } from 'dotenv';
 config({ path: '.env.local' });
 

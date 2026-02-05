@@ -1,16 +1,6 @@
-/**
- * リリース情報取得の動作確認スクリプト
- *
- * プラグインシステムを使用してGitHubリポジトリのリリース情報を取得します
- *
- * 使用方法:
- * 1. .env.local に GITHUB_TOKEN を設定
- * 2. npm run fetch:releases を実行
- */
 
 import { config } from 'dotenv';
 
-// .env.local を読み込む
 config({ path: '.env.local' });
 config({ path: '.env' });
 
@@ -20,10 +10,8 @@ import type { RepositoryReleases } from '../plugins/github';
 async function main() {
   console.log('🔌 Initializing plugin system...\n');
 
-  // デフォルトプラグインを登録
   registerDefaultPlugins();
 
-  // 登録されているプラグイン一覧を表示
   console.log('📋 Registered plugins:');
   for (const plugin of pluginRegistry.list()) {
     console.log(`   • ${plugin.name} (v${plugin.version})`);
@@ -31,7 +19,6 @@ async function main() {
   }
   console.log('');
 
-  // プラグインの検証
   console.log('✅ Validating plugins...');
   const validations = pluginRegistry.validateAll();
   for (const v of validations) {
@@ -44,7 +31,6 @@ async function main() {
   }
   console.log('');
 
-  // GitHub プラグインからデータを取得
   console.log('🚀 Fetching releases from GitHub plugin...\n');
 
   const result = await pluginRegistry.fetchFrom<RepositoryReleases>('github-releases');
@@ -90,7 +76,6 @@ async function main() {
     }
   }
 
-  // JSON形式でも出力（デバッグ用）
   console.log('\n' + '─'.repeat(60));
   console.log('📄 Raw JSON data (first repository only):');
   if (result.data.length > 0) {
