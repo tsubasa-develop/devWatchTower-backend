@@ -15,7 +15,7 @@ jobs:
     if: >-
       github.event_name == 'issue_comment' &&
       github.actor == 'tsubasa-develop' &&
-      (contains(github.event.comment.body, '@tsubasa-develop implement') || contains(github.event.comment.body, '@tsubasa-develop 実装して'))
+      (contains(github.event.comment.body, '@tsubasa-develop implement') || contains(github.event.comment.body, '@tsubasa-develop magi'))
     runs-on: ubuntu-latest
     steps:
       - name: Send trigger to Discord (#magi-ops)
@@ -67,7 +67,7 @@ jobs:
     if: >-
       github.event_name == 'pull_request_review_comment' &&
       github.actor == 'tsubasa-develop' &&
-      (contains(github.event.comment.body, '@tsubasa-develop implement') || contains(github.event.comment.body, '@tsubasa-develop 実装して'))
+      (contains(github.event.comment.body, '@tsubasa-develop implement') || contains(github.event.comment.body, '@tsubasa-develop magi'))
     runs-on: ubuntu-latest
     steps:
       - name: Send trigger to Discord (#magi-ops)
