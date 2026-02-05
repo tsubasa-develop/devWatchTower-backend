@@ -1,18 +1,9 @@
-/**
- * プラグインレジストリ
- *
- * プラグインの登録・取得・実行を管理します
- */
 
 import type { DataSourcePlugin, PluginResult } from './types';
 
 class PluginRegistry {
   private plugins: Map<string, DataSourcePlugin> = new Map();
 
-  /**
-   * プラグインを登録する
-   * @param plugin - 登録するプラグイン
-   */
   register(plugin: DataSourcePlugin): void {
     const name = plugin.metadata.name;
 
@@ -24,45 +15,22 @@ class PluginRegistry {
     console.log(`Plugin "${name}" registered successfully.`);
   }
 
-  /**
-   * プラグインを取得する
-   * @param name - プラグイン名
-   * @returns プラグインインスタンス（存在しない場合はundefined）
-   */
   get(name: string): DataSourcePlugin | undefined {
     return this.plugins.get(name);
   }
 
-  /**
-   * 登録されている全プラグインを取得する
-   * @returns プラグインの配列
-   */
   getAll(): DataSourcePlugin[] {
     return Array.from(this.plugins.values());
   }
 
-  /**
-   * プラグインが登録されているか確認する
-   * @param name - プラグイン名
-   * @returns 登録されている場合はtrue
-   */
   has(name: string): boolean {
     return this.plugins.has(name);
   }
 
-  /**
-   * プラグインを削除する
-   * @param name - プラグイン名
-   * @returns 削除された場合はtrue
-   */
   unregister(name: string): boolean {
     return this.plugins.delete(name);
   }
 
-  /**
-   * 全プラグインの検証を行う
-   * @returns 検証結果
-   */
   validateAll(): { name: string; valid: boolean; errors: string[] }[] {
     return this.getAll().map((plugin) => {
       const result = plugin.validate();
@@ -73,12 +41,6 @@ class PluginRegistry {
     });
   }
 
-  /**
-   * 指定したプラグインのデータを取得する
-   * @param name - プラグイン名
-   * @param config - プラグイン固有の設定
-   * @returns 取得結果
-   */
   async fetchFrom<T = unknown>(
     name: string,
     config?: Record<string, unknown>
@@ -117,10 +79,6 @@ class PluginRegistry {
     return plugin.fetch(config) as Promise<PluginResult<T>>;
   }
 
-  /**
-   * 全プラグインからデータを取得する
-   * @returns 各プラグインの取得結果
-   */
   async fetchFromAll(): Promise<Map<string, PluginResult>> {
     const results = new Map<string, PluginResult>();
 
@@ -132,10 +90,6 @@ class PluginRegistry {
     return results;
   }
 
-  /**
-   * 登録されているプラグインの一覧を取得する
-   * @returns プラグインのメタデータ一覧
-   */
   list(): { name: string; description: string; version: string }[] {
     return this.getAll().map((plugin) => ({
       name: plugin.metadata.name,
@@ -145,6 +99,5 @@ class PluginRegistry {
   }
 }
 
-// シングルトンインスタンス
 export const pluginRegistry = new PluginRegistry();
 

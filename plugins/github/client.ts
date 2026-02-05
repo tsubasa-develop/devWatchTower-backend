@@ -1,14 +1,8 @@
-/**
- * GitHub GraphQL API クライアント
- */
 
 import type { GraphQLResponse } from './types';
 
 const GITHUB_GRAPHQL_ENDPOINT = 'https://api.github.com/graphql';
 
-/**
- * GitHub GraphQL APIにリクエストを送信する
- */
 export async function fetchGraphQL<T>(
   query: string,
   variables?: Record<string, unknown>

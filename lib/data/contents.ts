@@ -1,6 +1,5 @@
 import type { Content, ContentListItem } from '@/lib/types';
 
-// 検索用モックデータ（bodyなし）
 export const contentListItems: ContentListItem[] = [
   { id: "550e8400-e29b-41d4-a716-446655440000", type: "repository", title: "devWatchTower - 開発監視ツール", summary: "開発プロジェクトの進捗を監視・管理するためのオールインワンツール。CI/CDパイプライン、コード品質、パフォーマンスメトリクスを統合的に可視化します。", metadata: "{\"downloads\": 1250, \"stars\": 342, \"pullRequests\": 28}", published_at: "2025-01-20T10:30:00Z", created_at: "2025-01-15T09:00:00Z", updated_at: "2025-01-22T14:20:00Z" },
   { id: "550e8400-e29b-41d4-a716-446655440001", type: "article", title: "TypeScriptで型安全なAPIクライアントを構築する", summary: "OpenAPI仕様から自動生成される型定義を活用して、コンパイル時にエラーを検出できる堅牢なAPIクライアントの実装方法を解説します。", metadata: "{\"author\": {\"name\": \"山田太郎\", \"email\": \"yamada@example.com\", \"avatarUrl\": \"https://randomuser.me/api/portraits/men/1.jpg\", \"bio\": \"フロントエンドエンジニア\"}}", published_at: "2025-01-19T15:45:00Z", created_at: "2025-01-18T10:00:00Z", updated_at: "2025-01-19T15:45:00Z" },
@@ -54,7 +53,6 @@ export const contentListItems: ContentListItem[] = [
   { id: "550e8400-e29b-41d4-a716-446655440049", type: "repository", title: "openapi-typescript-gen", summary: "OpenAPI仕様からTypeScript型定義を生成するツール。", metadata: "{\"downloads\": 7800, \"stars\": 1340, \"pullRequests\": 123}", published_at: "2024-12-29T11:00:00Z", created_at: "2024-12-01T08:00:00Z", updated_at: "2025-01-06T15:00:00Z" }
 ];
 
-// 詳細用モックデータ（bodyあり）
 export const contentDatabase: Record<string, Content> = {
   "550e8400-e29b-41d4-a716-446655440000": { id: "550e8400-e29b-41d4-a716-446655440000", type: "repository", title: "devWatchTower - 開発監視ツール", summary: "開発プロジェクトの進捗を監視・管理するためのオールインワンツール。CI/CDパイプライン、コード品質、パフォーマンスメトリクスを統合的に可視化します。", body: "# devWatchTower\n\n開発プロジェクトの進捗を一元管理するツールです。\n\n## 主な機能\n\n- CI/CDパイプラインの監視\n- コード品質メトリクスの可視化\n- パフォーマンス追跡\n\n## インストール\n\n```bash\nnpm install -g devwatchtower\n```", metadata: "{\"downloads\": 1250, \"stars\": 342, \"pullRequests\": 28}", published_at: "2025-01-20T10:30:00Z", created_at: "2025-01-15T09:00:00Z", updated_at: "2025-01-22T14:20:00Z" },
   "550e8400-e29b-41d4-a716-446655440001": { id: "550e8400-e29b-41d4-a716-446655440001", type: "article", title: "TypeScriptで型安全なAPIクライアントを構築する", summary: "OpenAPI仕様から自動生成される型定義を活用して、コンパイル時にエラーを検出できる堅牢なAPIクライアントの実装方法を解説します。", body: "# TypeScriptで型安全なAPIクライアントを構築する\n\n## はじめに\n\nOpenAPI仕様とTypeScriptを組み合わせることで、APIの変更を即座に検出できます。\n\n## 実装手順\n\n1. OpenAPI仕様を定義\n2. 型定義を自動生成\n3. クライアントを実装\n\n型安全性により、実行前にエラーを発見できます。", metadata: "{\"author\": {\"name\": \"山田太郎\", \"email\": \"yamada@example.com\", \"avatarUrl\": \"https://randomuser.me/api/portraits/men/1.jpg\", \"bio\": \"フロントエンドエンジニア\"}}", published_at: "2025-01-19T15:45:00Z", created_at: "2025-01-18T10:00:00Z", updated_at: "2025-01-19T15:45:00Z" },
@@ -69,13 +67,11 @@ export const contentDatabase: Record<string, Content> = {
   "550e8400-e29b-41d4-a716-446655440010": { id: "550e8400-e29b-41d4-a716-446655440010", type: "repository", title: "tailwind-plugin-utilities", summary: "Tailwind CSSのユーティリティクラスを拡張するカスタムプラグイン集。", body: "# tailwind-plugin-utilities\n\nTailwind CSSの便利なユーティリティ拡張。\n\n## 追加クラス\n\n- `flex-center` - 中央揃え\n- `glass-effect` - ガラスモーフィズム\n- `text-gradient` - グラデーションテキスト", metadata: "{\"downloads\": 5670, \"stars\": 890, \"pullRequests\": 134}", published_at: "2025-01-11T10:00:00Z", created_at: "2025-01-08T07:00:00Z", updated_at: "2025-01-19T13:20:00Z" }
 };
 
-// 残りのコンテンツも追加（簡略化のため一部省略）
 const additionalContents: Record<string, Content> = {
   "550e8400-e29b-41d4-a716-446655440011": { id: "550e8400-e29b-41d4-a716-446655440011", type: "sns", title: "TypeScript 5.4がリリース！新機能まとめ", summary: "TypeScript 5.4の新機能と改善点をまとめて紹介します。", body: "TypeScript 5.4の新機能：\n\n- NoInfer型\n- Object.groupBy対応\n- Import属性\n- 型推論の改善", metadata: "{\"favorites\": 423, \"reposts\": 134}", published_at: "2025-01-11T10:00:00Z", created_at: "2025-01-11T09:00:00Z", updated_at: "2025-01-11T10:00:00Z" },
   "550e8400-e29b-41d4-a716-446655440012": { id: "550e8400-e29b-41d4-a716-446655440012", type: "article", title: "Next.js App Routerへの移行ガイド", summary: "Pages RouterからApp Routerへのスムーズな移行方法を解説します。", body: "# App Router移行ガイド\n\n## 移行ステップ\n\n1. `app`ディレクトリ作成\n2. レイアウト移行\n3. ページ単位で段階的移行", metadata: "{\"author\": {\"name\": \"高橋健太\", \"avatarUrl\": \"https://randomuser.me/api/portraits/men/5.jpg\"}}", published_at: "2025-01-11T09:00:00Z", created_at: "2025-01-09T11:00:00Z", updated_at: "2025-01-11T09:00:00Z" },
   "550e8400-e29b-41d4-a716-446655440049": { id: "550e8400-e29b-41d4-a716-446655440049", type: "repository", title: "openapi-typescript-gen", summary: "OpenAPI仕様からTypeScript型定義を生成するツール。", body: "# openapi-typescript-gen\n\nOpenAPIからTypeScript型を生成。\n\n## 機能\n\n- スキーマから型生成\n- APIクライアント生成\n- Zodスキーマ出力", metadata: "{\"downloads\": 7800, \"stars\": 1340, \"pullRequests\": 123}", published_at: "2024-12-29T11:00:00Z", created_at: "2024-12-01T08:00:00Z", updated_at: "2025-01-06T15:00:00Z" }
 };
 
-// マージしたデータベース
 Object.assign(contentDatabase, additionalContents);
 

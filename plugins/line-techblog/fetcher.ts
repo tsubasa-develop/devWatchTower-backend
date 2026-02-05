@@ -1,19 +1,9 @@
-/**
- * LINE TechBlog RSSフィード取得ロジック
- */
 
 import type { RSSFeed, RSSItem } from './types';
 
-/** デフォルトのフィードURL */
 export const DEFAULT_FEED_URL = 'https://techblog.lycorp.co.jp/ja/feed/index.xml';
 
-/**
- * XMLからRSSアイテムを抽出するヘルパー関数
- * 属性付きタグ（例: <guid isPermaLink="true">）にも対応
- */
 function extractTextContent(xml: string, tagName: string): string {
-  // CDATAセクションを含む場合と含まない場合、属性付きタグにも対応
-  // パターン: <tagName ...attributes...>content</tagName> または <tagName>content</tagName>
   const cdataMatch = xml.match(
     new RegExp(`<${tagName}[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>\\s*</${tagName}>`)
   );
@@ -21,14 +11,10 @@ function extractTextContent(xml: string, tagName: string): string {
     return cdataMatch[1].trim();
   }
 
-  // 属性付きまたは属性なしのシンプルなタグ
   const simpleMatch = xml.match(new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)</${tagName}>`));
   return simpleMatch ? simpleMatch[1].trim() : '';
 }
 
-/**
- * RSSのitem要素をパースする
- */
 function parseRSSItem(itemXml: string): RSSItem {
   return {
     title: extractTextContent(itemXml, 'title'),
@@ -39,20 +25,15 @@ function parseRSSItem(itemXml: string): RSSItem {
   };
 }
 
-/**
- * RSSフィード全体をパースする
- */
 function parseRSSFeed(xml: string): RSSFeed {
   const channelMatch = xml.match(/<channel>([\s\S]*)<\/channel>/);
   const channelXml = channelMatch ? channelMatch[1] : xml;
 
-  // フィードのメタ情報を抽出
   const title = extractTextContent(channelXml, 'title');
   const description = extractTextContent(channelXml, 'description');
   const link = extractTextContent(channelXml, 'link');
   const lastBuildDate = extractTextContent(channelXml, 'lastBuildDate');
 
-  // 各item要素を抽出
   const itemMatches = channelXml.match(/<item>[\s\S]*?<\/item>/g) || [];
   const items = itemMatches.map(parseRSSItem);
 
@@ -65,13 +46,6 @@ function parseRSSFeed(xml: string): RSSFeed {
   };
 }
 
-/**
- * RSSフィードを取得する
- *
- * @param feedUrl - フィードのURL
- * @param maxItems - 取得する最大アイテム数（省略時は全件）
- * @returns 取得結果
- */
 export async function fetchRSSFeed(
   feedUrl: string = DEFAULT_FEED_URL,
   maxItems?: number
@@ -95,7 +69,6 @@ export async function fetchRSSFeed(
     const xml = await response.text();
     const feed = parseRSSFeed(xml);
 
-    // maxItems が指定されていれば制限
     if (maxItems !== undefined && maxItems > 0) {
       feed.items = feed.items.slice(0, maxItems);
     }

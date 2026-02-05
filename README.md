@@ -26,6 +26,11 @@ DevWatchTower Backend は、開発者向けのブログやリポジトリの更�
 - `supabase/`: データベースマイグレーションと設定。
 - `docs/`: API ドキュメント (`api-doc.yaml`)。
 
+## 🧩 開発ルール (AI エージェント含む)
+
+- コメントは原則不要（冗長な説明コメントは追加しない）
+- 詳細: [docs/ai-agent-guidelines.md](./docs/ai-agent-guidelines.md)
+
 ## 🏁 セットアップ
 
 ### 1. 環境変数の設定

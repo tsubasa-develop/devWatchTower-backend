@@ -1,6 +1,3 @@
-/**
- * GitHub リポジトリのリリース情報取得ロジック
- */
 
 import { fetchGraphQL } from './client';
 import type {
@@ -11,9 +8,6 @@ import type {
   GitHubRelease,
 } from './types';
 
-/**
- * 複数リポジトリのリリース情報を一度のGraphQLリクエストで取得するためのクエリを生成
- */
 export function buildReleasesQuery(repos: RepositoryIdentifier[], releasesPerRepo: number = 10): string {
   const repoQueries = repos
     .map((repo, index) => {
@@ -56,9 +50,6 @@ export function buildReleasesQuery(repos: RepositoryIdentifier[], releasesPerRep
 }`;
 }
 
-/**
- * GraphQLレスポンスからリリース情報を変換
- */
 function transformReleaseNode(node: ReleaseNode): GitHubRelease {
   return {
     tagName: node.tagName,
@@ -78,9 +69,6 @@ function transformReleaseNode(node: ReleaseNode): GitHubRelease {
   };
 }
 
-/**
- * GraphQLレスポンスからリポジトリリリース情報を変換
- */
 function transformRepositoryResponse(response: RepositoryResponse): RepositoryReleases {
   return {
     owner: response.owner.login,
@@ -93,9 +81,6 @@ function transformRepositoryResponse(response: RepositoryResponse): RepositoryRe
   };
 }
 
-/**
- * 複数リポジトリのリリース情報を取得
- */
 export async function fetchRepositoriesReleases(
   repos: RepositoryIdentifier[],
   releasesPerRepo: number = 10
