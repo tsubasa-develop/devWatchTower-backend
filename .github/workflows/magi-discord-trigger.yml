@@ -36,6 +36,7 @@ jobs:
           actor=os.environ['ACTOR']
           comment_body=os.environ.get('COMMENT_BODY','')
           content = (
+            "<@1468648944815833210>\n"
             "MAGI_TRIGGER v1\n"
             f"repo: {repo}\n"
             f"issue: #{issue_number}\n"
