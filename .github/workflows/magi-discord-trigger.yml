@@ -34,30 +34,30 @@ jobs:
           fi
 
           payload="$(python3 - <<'PY'
-import json, os
+          import json, os
 
-repo=os.environ["REPO"]
-url=os.environ["URL"]
-number=os.environ["NUMBER"]
-actor=os.environ["ACTOR"]
-comment=os.environ.get("COMMENT_BODY","")
-event_kind=os.environ.get("EVENT_KIND","issue_comment")
-content = (
-  "<@1468648944815833210>\n"
-  "MAGI_TRIGGER v1\n"
-  f"event: {event_kind}\n"
-  f"repo: {repo}\n"
-  f"number: {number}\n"
-  f"url: {url}\n"
-  f"actor: {actor}\n"
-  "command: implement\n"
-  "---\n"
-  f"comment:\n{comment}\n"
-)
+          repo=os.environ["REPO"]
+          url=os.environ["URL"]
+          number=os.environ["NUMBER"]
+          actor=os.environ["ACTOR"]
+          comment=os.environ.get("COMMENT_BODY","")
+          event_kind=os.environ.get("EVENT_KIND","issue_comment")
+          content = (
+            "<@1468648944815833210>\n"
+            "MAGI_TRIGGER v1\n"
+            f"event: {event_kind}\n"
+            f"repo: {repo}\n"
+            f"number: {number}\n"
+            f"url: {url}\n"
+            f"actor: {actor}\n"
+            "command: implement\n"
+            "---\n"
+            f"comment:\n{comment}\n"
+          )
 
-print(json.dumps({"content": content}, ensure_ascii=False))
-PY
-)"
+          print(json.dumps({"content": content}, ensure_ascii=False))
+          PY
+          )"
           curl -fsS -X POST "$DISCORD_WEBHOOK_URL" \
             -H 'Content-Type: application/json' \
             --data "$payload"
@@ -78,7 +78,7 @@ PY
           NUMBER: ${{ github.event.pull_request.number }}
           ACTOR: ${{ github.actor }}
           COMMENT_BODY: ${{ github.event.comment.body }}
-          PATH: ${{ github.event.comment.path }}
+          FILE_PATH: ${{ github.event.comment.path }}
           LINE: ${{ github.event.comment.line }}
           SIDE: ${{ github.event.comment.side }}
           EVENT_KIND: pull_request_review_comment
@@ -88,35 +88,35 @@ PY
             exit 1
           fi
           payload="$(python3 - <<'PY'
-import json, os
+          import json, os
 
-repo=os.environ["REPO"]
-url=os.environ["URL"]
-number=os.environ["NUMBER"]
-actor=os.environ["ACTOR"]
-comment=os.environ.get("COMMENT_BODY","")
-path=os.environ.get("PATH","")
-line=os.environ.get("LINE","")
-side=os.environ.get("SIDE","")
-event_kind=os.environ.get("EVENT_KIND","pull_request_review_comment")
+          repo=os.environ["REPO"]
+          url=os.environ["URL"]
+          number=os.environ["NUMBER"]
+          actor=os.environ["ACTOR"]
+          comment=os.environ.get("COMMENT_BODY","")
+          path=os.environ.get("FILE_PATH","")
+          line=os.environ.get("LINE","")
+          side=os.environ.get("SIDE","")
+          event_kind=os.environ.get("EVENT_KIND","pull_request_review_comment")
 
-content = (
-  "<@1468648944815833210>\n"
-  "MAGI_TRIGGER v1\n"
-  f"event: {event_kind}\n"
-  f"repo: {repo}\n"
-  f"number: {number}\n"
-  f"url: {url}\n"
-  f"actor: {actor}\n"
-  "command: implement\n"
-  f"context: {path}:{line} ({side})\n"
-  "---\n"
-  f"comment:\n{comment}\n"
-)
+          content = (
+            "<@1468648944815833210>\n"
+            "MAGI_TRIGGER v1\n"
+            f"event: {event_kind}\n"
+            f"repo: {repo}\n"
+            f"number: {number}\n"
+            f"url: {url}\n"
+            f"actor: {actor}\n"
+            "command: implement\n"
+            f"context: {path}:{line} ({side})\n"
+            "---\n"
+            f"comment:\n{comment}\n"
+          )
 
-print(json.dumps({"content": content}, ensure_ascii=False))
-PY
-)"
+          print(json.dumps({"content": content}, ensure_ascii=False))
+          PY
+          )"
           curl -fsS -X POST "$DISCORD_WEBHOOK_URL" \
             -H 'Content-Type: application/json' \
             --data "$payload"
