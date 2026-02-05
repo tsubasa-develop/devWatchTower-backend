@@ -1,0 +1,54 @@
+name: magi trigger (discord)
+
+"on":
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    if: >-
+      github.actor == 'tsubasa0717' &&
+      (contains(github.event.comment.body, '@magi implement') || contains(github.event.comment.body, '@magi 実装して'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send trigger to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          REPO: ${{ github.repository }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ACTOR: ${{ github.actor }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL is not set" >&2
+            exit 1
+          fi
+
+          payload=$(python3 - <<'PY'
+          import json, os
+          repo=os.environ['REPO']
+          issue_url=os.environ['ISSUE_URL']
+          issue_number=os.environ['ISSUE_NUMBER']
+          actor=os.environ['ACTOR']
+          comment_body=os.environ.get('COMMENT_BODY','')
+          content = (
+            "MAGI_TRIGGER v1\n"
+            f"repo: {repo}\n"
+            f"issue: #{issue_number}\n"
+            f"url: {issue_url}\n"
+            f"actor: {actor}\n"
+            "command: implement\n"
+            "---\n"
+            f"comment:\n{comment_body}\n"
+          )
+
+          print(json.dumps({"content": content}, ensure_ascii=False))
+          PY
+          )
+          curl -fsS -X POST "$DISCORD_WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            --data "$payload"
