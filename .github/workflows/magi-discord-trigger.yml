@@ -10,7 +10,7 @@ permissions:
 jobs:
   trigger:
     if: >-
-      github.actor == 'tsubasa0717' &&
+      (github.actor == 'tsubasa0717' || github.actor == 'tsubasa-develop') &&
       (contains(github.event.comment.body, '@magi implement') || contains(github.event.comment.body, '@magi 実装して'))
     runs-on: ubuntu-latest
     steps:
