@@ -2,152 +2,168 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="description" content="DevWatchTower Backend の概要と API エンドポイントを紹介します。" />
     <title>DevWatchTower Backend</title>
     <style>
       :root {
         color-scheme: light;
-        --bg: #ffffff;
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --surface-muted: color-mix(in srgb, var(--surface), #0f172a 6%);
         --fg: #0f172a;
         --muted: #475569;
-        --card: #f8fafc;
-        --border: #e2e8f0;
-        --link: #2563eb;
+        --border: color-mix(in srgb, var(--surface), #94a3b8 25%);
+        --accent: #2563eb;
         --codebg: #0b1220;
         --codefg: #e2e8f0;
+        --radius: 16px;
+        --shadow: 0 12px 24px -18px rgba(15, 23, 42, 0.35);
+        --max: min(1024px, 92vw);
       }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica,
-          Arial, "Apple Color Emoji", "Segoe UI Emoji";
-        background: var(--bg);
+        font-family: "Inter", "Noto Sans JP", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(circle at 20% 0%, #eef2ff 0%, transparent 42%),
+          var(--bg);
         color: var(--fg);
-      }
-      header {
-        padding: 48px 20px 20px;
-        border-bottom: 1px solid var(--border);
-        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-      }
-      main {
-        max-width: 980px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      h1 {
-        margin: 0 0 8px;
-        font-size: 28px;
-        letter-spacing: -0.02em;
-      }
-      p {
-        margin: 0 0 12px;
-        color: var(--muted);
         line-height: 1.7;
       }
+
       a {
-        color: var(--link);
+        color: var(--accent);
       }
+
+      main {
+        width: var(--max);
+        margin-inline: auto;
+        padding: clamp(16px, 2.5vw, 24px);
+      }
+
+      .hero {
+        padding-block: clamp(32px, 6vw, 56px);
+      }
+
+      .hero-inner {
+        display: grid;
+        gap: 16px;
+        background: color-mix(in srgb, var(--surface), #e2e8f0 6%);
+        border: 1px solid var(--border);
+        border-radius: calc(var(--radius) + 4px);
+        padding: clamp(20px, 4vw, 32px);
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(24px, 3.2vw, 34px);
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        background: var(--surface);
+        width: fit-content;
+      }
+
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 14px;
-        margin-top: 18px;
+        gap: clamp(12px, 2vw, 16px);
+        grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
       }
+
       .card {
+        padding: clamp(16px, 2.5vw, 20px);
+        border-radius: var(--radius);
         border: 1px solid var(--border);
-        background: var(--card);
-        border-radius: 12px;
-        padding: 14px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
       }
+
       .card h2 {
-        margin: 0 0 8px;
+        margin: 0 0 10px;
         font-size: 16px;
       }
+
       .list {
         margin: 0;
         padding-left: 18px;
         color: var(--muted);
       }
+
       .code {
-        border-radius: 12px;
+        margin-top: clamp(16px, 3vw, 24px);
+        padding: clamp(14px, 2.5vw, 18px);
+        border-radius: var(--radius);
         background: var(--codebg);
         color: var(--codefg);
-        padding: 14px;
-        overflow: auto;
         border: 1px solid #111827;
-        margin-top: 12px;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
           "Liberation Mono", "Courier New", monospace;
         font-size: 13px;
-        line-height: 1.6;
-      }
-      .code .dim {
-        color: #94a3b8;
-      }
-      footer {
-        padding: 20px;
-        border-top: 1px solid var(--border);
-        color: var(--muted);
-        font-size: 12px;
-      }
-      .code {
         white-space: pre-wrap;
         word-break: break-word;
       }
-      @media (max-width: 1024px) {
-        header {
-          padding: 40px 16px 16px;
-        }
-        main {
-          max-width: 880px;
-          padding: 16px;
-        }
+
+      footer {
+        margin-top: clamp(24px, 5vw, 40px);
+        padding-bottom: 32px;
+        color: var(--muted);
+        font-size: 12px;
       }
+
       @media (max-width: 768px) {
-        h1 {
-          font-size: 24px;
-        }
-        .grid {
-          grid-template-columns: 1fr;
-          gap: 12px;
+        .hero-inner {
+          padding: 18px;
         }
         .card {
-          padding: 12px;
-        }
-        .code {
-          font-size: 12px;
-        }
-      }
-      @media (max-width: 480px) {
-        header {
-          padding: 28px 14px 14px;
-        }
-        p {
-          font-size: 14px;
-        }
-        .list {
-          padding-left: 16px;
+          box-shadow: none;
         }
       }
     </style>
   </head>
   <body>
-    <header>
+    <header class="hero">
       <main>
-        <h1>DevWatchTower Backend</h1>
-        <p>
-          開発者向けの更新情報（GitHub Releases / 技術ブログなど）を定期取得し、
-          Supabase に保存し、読み取り専用 APIとして提供するバックエンドです。
-        </p>
-        <p>
-          API 仕様: <a href="/docs/api-doc.yaml">docs/api-doc.yaml</a>
-          <span class="dim">(OpenAPI)</span>
-        </p>
+        <div class="hero-inner">
+          <span class="pill">Backend / API Overview</span>
+          <h1>DevWatchTower Backend</h1>
+          <p>
+            開発者向けの更新情報（GitHub Releases / 技術ブログなど）を定期取得し、
+            Supabase に保存したうえで読み取り専用 API として提供します。
+          </p>
+          <p>
+            API 仕様: <a href="/docs/api-doc.yaml">docs/api-doc.yaml</a>
+            <span class="pill">OpenAPI</span>
+          </p>
+        </div>
       </main>
     </header>
 
     <main>
-      <div class="grid">
-        <section class="card">
+      <section class="grid" aria-label="Project overview">
+        <article class="card">
           <h2>何をしている？</h2>
           <ul class="list">
             <li>外部ソースからコンテンツを取得</li>
@@ -155,41 +171,39 @@
             <li>Supabase へ UPSERT</li>
             <li>公開 API で取得できるようにする</li>
           </ul>
-        </section>
+        </article>
 
-        <section class="card">
+        <article class="card">
           <h2>主なエンドポイント</h2>
           <ul class="list">
             <li><code>GET /api/contents</code> 公開コンテンツ一覧</li>
             <li><code>GET /api/contents/{id}</code> コンテンツ詳細</li>
           </ul>
-        </section>
+        </article>
 
-        <section class="card">
+        <article class="card">
           <h2>データ取得（プラグイン）</h2>
           <ul class="list">
             <li><code>plugins/github</code> GitHub Releases など</li>
             <li><code>plugins/line-techblog</code> RSS フィード</li>
           </ul>
-        </section>
+        </article>
 
-        <section class="card">
+        <article class="card">
           <h2>ローカル実行</h2>
           <ul class="list">
             <li><code>npm run dev</code> 開発サーバー</li>
-            <li><code>npm run sync:releases</code> 取得→DB同期</li>
+            <li><code>npm run sync:releases</code> 取得 → DB 同期</li>
           </ul>
-        </section>
-      </div>
+        </article>
+      </section>
 
       <div class="code" aria-label="Example API usage">
-        <div class="dim"># contents 一覧（例）</div>
-        <div>
-          curl "http://localhost:3000/api/contents?limit=20&amp;sort=published_at&amp;order=desc"
-        </div>
-        <br />
-        <div class="dim"># 特定コンテンツ（例）</div>
-        <div>curl "http://localhost:3000/api/contents/&lt;id&gt;"</div>
+        # contents 一覧（例）
+        curl "http://localhost:3000/api/contents?limit=20&sort=published_at&order=desc"
+
+        # 特定コンテンツ（例）
+        curl "http://localhost:3000/api/contents/<id>"
       </div>
     </main>
 
