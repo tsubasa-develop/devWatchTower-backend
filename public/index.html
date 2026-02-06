@@ -89,6 +89,45 @@
         color: var(--muted);
         font-size: 12px;
       }
+      .code {
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      @media (max-width: 1024px) {
+        header {
+          padding: 40px 16px 16px;
+        }
+        main {
+          max-width: 880px;
+          padding: 16px;
+        }
+      }
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 24px;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+        .card {
+          padding: 12px;
+        }
+        .code {
+          font-size: 12px;
+        }
+      }
+      @media (max-width: 480px) {
+        header {
+          padding: 28px 14px 14px;
+        }
+        p {
+          font-size: 14px;
+        }
+        .list {
+          padding-left: 16px;
+        }
+      }
     </style>
   </head>
   <body>
